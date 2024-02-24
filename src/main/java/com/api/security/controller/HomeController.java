@@ -1,24 +1,42 @@
 package com.api.security.controller;
 
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.api.security.models.AuthenticationRequest;
+import com.api.security.models.AuthenticationResponse;
+import com.api.security.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class HomeController {
 
-    @GetMapping
-    public String home() {
-        return "Hello, World!";
-    }
+    private final AuthenticationManager authenticationManagerBean;
+    private final JwtUtil jwtUtil;
 
 
     @GetMapping("/user")
     public String user() {
-        return "Hello, User! fuck you";
+        return "Hello, User !!";
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> generateJwtTokenForUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        try {
+            authenticationManagerBean.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(), authenticationRequest.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect username or password " , e);
+        }
+
+        String token = jwtUtil.generateToken(authenticationRequest.getUserName());
+
+        return  ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }
