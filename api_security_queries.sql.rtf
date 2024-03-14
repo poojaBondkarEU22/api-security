@@ -1,0 +1,34 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2759
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww20520\viewh11900\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+CREATE TABLE tbl_user (\
+	id SERIAL PRIMARY KEY,\
+	username VARCHAR(50),\
+	password VARCHAR(200)\
+);\
+\
+CREATE TABLE tbl_user_roles (\
+	id SERIAL PRIMARY KEY,\
+	user_id INT,\
+	roles VARCHAR(50),\
+	FOREIGN KEY (user_id) REFERENCES tbl_user(id)\
+);\
+\
+INSERT INTO tbl_user (username, password) values ('pooja', '$2a$10$daICdDXo1N1fg/A/9ttEhOiqZ9Px1qMEvb95E6dK6WCA98pvTddv6');\
+INSERT INTO tbl_user (username, password) values ('admin', '$2a$10$DGVPbYCSCF2rRdDG8yBi6ug5JB/fr/W2.F41FZoOxG/Tlx1JrujPe');\
+\
+\
+INSERT INTO tbl_user_roles (user_id, roles) values ( (select id from tbl_user where username='pooja') , 'ROLE_ADMIN');\
+INSERT INTO tbl_user_roles (user_id, roles) values ( (select id from tbl_user where username='pooja') , 'ROLE_USER');\
+\
+INSERT INTO tbl_user_roles (user_id, roles) values ( (select id from tbl_user where username='admin') , 'ROLE_ADMIN');\
+\
+select * from tbl_user;\
+\
+select * from tbl_user_roles;\
+commit;}
